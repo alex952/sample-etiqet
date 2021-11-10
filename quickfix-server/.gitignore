@@ -1,0 +1,6 @@
+__pycache__/
+*.log
+*.body
+*.header
+*.seqnums
+*.session
