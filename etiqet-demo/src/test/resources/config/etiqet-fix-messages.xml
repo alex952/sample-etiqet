@@ -11,34 +11,6 @@
             <field name="OrdType" type="string">2</field>
             <field method="getDateTime" name="TransactTime"
                    type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
-            <field name="ReceivedDeptID">9</field>
-            <field name="AccountType">1</field>
-        </fields>
-    </message>
-    <message admin='N' msgtype='G' name='OrderCancelReplaceRequest'>
-        <implementation>quickfix.fix44.OrderCancelReplaceRequest</implementation>
-        <fields>
-            <field method="genClientOrderID" name="ClOrdID"
-                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
-            <field name="Symbol" type="string">CSCO</field>
-            <field name="Side" type="integer">1</field>
-            <field name="OrderQty" type="integer">100</field>
-            <field name="OrdType" type="string">2</field>
-            <field method="getDateTime" name="TransactTime"
-                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
-        </fields>
-    </message>
-    <message admin="N" name="OrderCancelRequest">
-        <implementation>quickfix.fix44.OrderCancelRequest</implementation>
-        <fields>
-            <field method="genClientOrderID" name="OrigClOrdID"
-                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
-            <field method="genClientOrderID" name="ClOrdID"
-                   type="integer" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
-            <field name="Symbol" type="string">CSCO</field>
-            <field name="Side" type="integer">1</field>
-            <field method="getDateTime" name="TransactTime"
-                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
         </fields>
     </message>
     <message admin="N" msgtype="8" name="ExecutionReport">
@@ -54,7 +26,7 @@
             <field allowedValues="0,1,2,3,4,5,6,7,8,9,A,B,C,D,E" name="OrdStatus" required="Y"
                    type="string">A
             </field>
-            <field allowedValues="0,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I" name="ExecType" required="Y"
+            <field allowedValues="0,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I" name="ExecType" required="Y"
                    type="string">A
             </field>
             <field name="LeavesQty" required="Y" type="integer">0</field>
