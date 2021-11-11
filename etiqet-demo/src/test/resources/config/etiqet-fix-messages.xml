@@ -13,6 +13,34 @@
                    type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
         </fields>
     </message>
+    <message admin="N" name="OrderCancelRequest">
+        <implementation>quickfix.fix44.OrderCancelRequest</implementation>
+        <fields>
+            <field method="genClientOrderID" name="OrigClOrdID"
+                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
+            <field method="genClientOrderID" name="ClOrdID"
+                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
+            <field name="Symbol" type="string">CSCO</field>
+            <field name="Side" type="integer">1</field>
+            <field method="getDateTime" name="TransactTime"
+                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
+        </fields>
+    </message>
+    <message admin="N" name="OrderCancelReplaceRequest">
+        <implementation>quickfix.fix44.OrderCancelReplaceRequest</implementation>
+        <fields>
+            <field method="genClientOrderID" name="OrigClOrdID"
+                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
+            <field method="genClientOrderID" name="ClOrdID"
+                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
+            <field name="Symbol" type="string">CSCO</field>
+            <field name="Side" type="integer">1</field>
+            <field name="OrderQty" type="integer">100</field>
+            <field name="OrdType" type="string">2</field>
+            <field method="getDateTime" name="TransactTime"
+                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
+        </fields>
+    </message>
     <message admin="N" msgtype="8" name="ExecutionReport">
         <implementation>quickfix.fix44.ExecutionReport</implementation>
         <fields>

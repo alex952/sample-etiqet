@@ -1,6 +1,6 @@
 """FIX Application"""
 import quickfix as fix
-import quickfix42 as fix42
+import quickfix44 as fix44
 import logging
 import time
 from model.logger import setup_logger
@@ -59,29 +59,8 @@ class Application(fix.Application):
         message.getHeader().getField( beginString )
         message.getHeader().getField( msgType )
 
-        symbol = fix.Symbol()
-        side = fix.Side()
-        ordType = fix.OrdType()
-        orderQty = fix.OrderQty()
-        price = fix.Price()
-        clOrdID = fix.ClOrdID()
-
-        message.getField( ordType )
-        if ordType.getValue() != fix.OrdType_MARKET:
-            raise fix.IncorrectTagValue( ordType.getField() )
-#         message.getField( price )
-# 
-#         if price:
-#             fix.TagNotDefinedForMessage( price.getField() )
-
-        message.getField( symbol )
-        message.getField( side )
-        message.getField( orderQty )
-        message.getField( clOrdID )
-
-
         def _generateExecReport(ordStatus, execType, clOrdID, orderId, execId, symbol, side, orderQty, price):
-            executionReport = fix42.ExecutionReport()
+            executionReport = fix44.ExecutionReport()
 
             executionReport.setField( fix.ExecType(execType) )
             executionReport.setField( fix.OrdStatus(ordStatus) )
@@ -99,19 +78,58 @@ class Application(fix.Application):
 
             return executionReport
 
+        if msgType.getValue() in (fix.MsgType_NewOrderSingle, fix.MsgType_OrderCancelRequest, fix.MsgType_OrderCancelReplaceRequest):
 
-        orderId = self.genOrderID()
-        execId = self.genExecID()
-        pendingNew  = _generateExecReport(fix.OrdStatus_PENDING_NEW, fix.ExecType_PENDING_NEW, clOrdID, "0000", "0000", symbol, side, orderQty, fix.Price(0.0))
-        new         = _generateExecReport(fix.OrdStatus_NEW, fix.ExecType_NEW, clOrdID, orderId, execId, symbol, side, orderQty, fix.Price(1.3))
-        filled      = _generateExecReport(fix.OrdStatus_FILLED, fix.ExecType_FILL, clOrdID, orderId, execId, symbol, side, orderQty, fix.Price(1.3))
+            clOrdID = fix.ClOrdID()
+            symbol = fix.Symbol()
+            side = fix.Side()
+            message.getField( symbol )
+            message.getField( side )
+            message.getField( clOrdID )
 
-        try:
-            fix.Session.sendToTarget( pendingNew, sessionID )
-            fix.Session.sendToTarget( new, sessionID )
-            fix.Session.sendToTarget( filled, sessionID )
-        except fix.SessionNotFound as e:
-            return
+            orderId = self.genOrderID()
+            execId = self.genExecID()
+
+            reports = []
+
+            if msgType.getValue() == fix.MsgType_NewOrderSingle:
+                ordType = fix.OrdType()
+                orderQty = fix.OrderQty()
+                price = fix.Price()
+
+                message.getField( ordType )
+                if ordType.getValue() != fix.OrdType_LIMIT:
+                    raise fix.IncorrectTagValue( ordType.getField() )
+
+                message.getField( orderQty )
+                message.getField( price )
+
+                reports.append(_generateExecReport(fix.OrdStatus_PENDING_NEW, fix.ExecType_PENDING_NEW, clOrdID, "0000", "0000", symbol, side, orderQty, fix.Price(0.0)))
+                reports.append(_generateExecReport(fix.OrdStatus_NEW, fix.ExecType_NEW, clOrdID, orderId, execId, symbol, side, orderQty, price))
+                reports.append(_generateExecReport(fix.OrdStatus_FILLED, fix.ExecType_FILL, clOrdID, orderId, execId, symbol, side, orderQty, price))
+            elif msgType.getValue() == fix.MsgType_OrderCancelRequest:
+                reports.append(_generateExecReport(fix.OrdStatus_PENDING_CANCEL, fix.ExecType_PENDING_CANCEL, clOrdID, "0000", "0000", symbol, side, fix.OrderQty(0), fix.Price(0.0)))
+                reports.append(_generateExecReport(fix.OrdStatus_CANCELED, fix.ExecType_CANCELED, clOrdID, orderId, execId, symbol, side, fix.OrderQty(0), fix.Price(0.0)))
+            else:
+                ordType = fix.OrdType()
+                orderQty = fix.OrderQty()
+                price = fix.Price()
+
+                message.getField( ordType )
+                if ordType.getValue() != fix.OrdType_LIMIT:
+                    raise fix.IncorrectTagValue( ordType.getField() )
+
+                message.getField( orderQty )
+                message.getField( price )
+
+                reports.append(_generateExecReport(fix.OrdStatus_PENDING_REPLACE, fix.ExecType_PENDING_REPLACE, clOrdID, "0000", "0000", symbol, side, orderQty, fix.Price(0.0)))
+                reports.append(_generateExecReport(fix.OrdStatus_REPLACED, fix.ExecType_REPLACED, clOrdID, orderId, execId, symbol, side, orderQty, price))
+
+            try:
+                for r in reports:
+                    fix.Session.sendToTarget( r, sessionID )
+            except fix.SessionNotFound:
+                return
 
     def genOrderID(self):
         self.orderID += 1
