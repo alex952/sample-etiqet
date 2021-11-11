@@ -1,7 +1,7 @@
 # Etiqet demo project
 The repository contains:
 
-* Simple python quickfix acceptor that will reply to NewOrderSingle messages (found in _quickfix-server_)
+* Simple python quickfix acceptor that will reply to NewOrderSingle/OrderCancelRequest/OrderCancelReplaceRequest messages (found in _quickfix-server_)
 * Java project implementing tests using Etiqet (found in _etiqet-demo_)
 
 Features for test definitions are located under *src/test/resources/features*
