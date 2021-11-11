@@ -29,7 +29,15 @@ Scenario: Send a OrderCancelRequest and receive 2 reports back
     Then wait for an "ExecutionReport" message as "Cancel"
     Then stop client
 
-Scenario: Send a OrderCancelReplaceRequest and receive 3 reports back
+Scenario: Send a wrong OrderCancelRequest and receive 2 reports back
+    Given a "fix" client
+    When client is logged on
+    And filter out "Logon" message
+    Then send a "OrderCancelRequest" message with "OrigClOrdID=2,ClOrdID=99,Symbol=EURUSD,Side=1" as "cancelReq"
+    Then wait for an "OrderCancelReject" message as "rejectCancel"
+    Then stop client
+
+Scenario: Send a OrderCancelReplaceRequest and receive 2 reports back
     Given a "fix" client
     When client is logged on
     And filter out "Logon" message

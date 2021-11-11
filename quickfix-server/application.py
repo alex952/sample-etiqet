@@ -108,8 +108,22 @@ class Application(fix.Application):
                 reports.append(_generateExecReport(fix.OrdStatus_NEW, fix.ExecType_NEW, clOrdID, orderId, execId, symbol, side, orderQty, price))
                 reports.append(_generateExecReport(fix.OrdStatus_FILLED, fix.ExecType_FILL, clOrdID, orderId, execId, symbol, side, orderQty, price))
             elif msgType.getValue() == fix.MsgType_OrderCancelRequest:
-                reports.append(_generateExecReport(fix.OrdStatus_PENDING_CANCEL, fix.ExecType_PENDING_CANCEL, clOrdID, "0000", "0000", symbol, side, fix.OrderQty(0), fix.Price(0.0)))
-                reports.append(_generateExecReport(fix.OrdStatus_CANCELED, fix.ExecType_CANCELED, clOrdID, orderId, execId, symbol, side, fix.OrderQty(0), fix.Price(0.0)))
+                origClOrdId = fix.OrigClOrdID()
+                message.getField(origClOrdId)
+
+                if origClOrdId.getValue() != '1':
+                    reject = fix44.OrderCancelReject()
+                    reject.setField(fix.OrderID("NONE"))
+                    reject.setField(fix.ClOrdID(self.genOrderID()))
+                    reject.setField(fix.OrigClOrdID(origClOrdId.getValue()))
+                    reject.setField(fix.OrdStatus(fix.OrdStatus_REJECTED))
+                    reject.setField(fix.CxlRejResponseTo(fix.CxlRejResponseTo_ORDER_CANCEL_REQUEST))
+                    reject.setField(fix.CxlRejReason(fix.CxlRejReason_UNKNOWN_ORDER))
+
+                    reports.append(reject)
+                else:
+                    reports.append(_generateExecReport(fix.OrdStatus_PENDING_CANCEL, fix.ExecType_PENDING_CANCEL, clOrdID, "0000", "0000", symbol, side, fix.OrderQty(0), fix.Price(0.0)))
+                    reports.append(_generateExecReport(fix.OrdStatus_CANCELED, fix.ExecType_CANCELED, clOrdID, orderId, execId, symbol, side, fix.OrderQty(0), fix.Price(0.0)))
             else:
                 ordType = fix.OrdType()
                 orderQty = fix.OrderQty()

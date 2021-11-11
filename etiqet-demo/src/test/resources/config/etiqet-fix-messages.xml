@@ -26,6 +26,21 @@
                    type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils"/>
         </fields>
     </message>
+    <message admin="N" name="OrderCancelReject">
+        <implementation>quickfix.fix44.OrderCancelReject</implementation>
+        <fields>
+            <field name="OrderID" allowedValues="NONE" type="string" required="Y">NONE</field>
+            <field method="genClientOrderID" name="ClOrdID"
+                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils" required="Y"/>
+            <field method="genClientOrderID" name="OrigClOrdID"
+                   type="string" utilclass="com.neueda.etiqet.fix.message.FIXUtils" required="Y"/>
+            <field allowedValues="8" name="OrdStatus" required="Y"
+                   type="string">8
+            </field>
+            <!-- <field name="CxlRejResponseTo" required="Y" type="int" allowedValues="1">1</field> -->
+            <!-- <field name="CxlRejReason" required="Y" type="string" allowedValues="Unknown Order">Unknown Order</field> -->
+        </fields>
+    </message>
     <message admin="N" name="OrderCancelReplaceRequest">
         <implementation>quickfix.fix44.OrderCancelReplaceRequest</implementation>
         <fields>
