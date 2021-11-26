@@ -6,6 +6,13 @@ The repository contains:
 
 Features for test definitions are located under *src/test/resources/features*
 
+## Requirements
+The python server requires quickfix library, which can be installed by issuing
+
+```bash
+python -m pip install -r requirements.txt
+```
+
 ## Running the project
 Some scripts were created to run the setup.
 
